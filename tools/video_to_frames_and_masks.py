@@ -7,11 +7,13 @@ from tqdm import tqdm
 import numpy as np
 
 # folder containing videos
-videos_folder = ''
+videos_folder = '../drive/MyDrive/Colab Notebooks/data/Videos'
+# videos_folder = ''
 # file extension of the videos
 video_file_extension = '.mov'
 # folder containing
-annotations_folder = ''
+annotations_folder = '../drive/MyDrive/Colab Notebooks/data/Video_Annotation'
+# annotations_folder = ''
 
 # if save_frame = 4, this means every 4th frame is saved
 # if save_frame = 1, every frame will be saved
@@ -20,17 +22,19 @@ save_frame = 4
 # use 1 for training data and 255 for testing data
 foreground_in_mask = 255
 # folder where to output all the frames
-frames_output_folder = ''
-masks_output_folder = ''
+frames_output_folder = 'frame_output'
+masks_output_folder = 'mask_output'
 
 
 def parse_annotations_data(data_list):
     annotations = {}
     for d in data_list:
-        d = d.replace(' ', '').split(',')
-        frame_number = int(d[0])
+        d = d.replace('(','').replace(')','').replace(',','')
+        x = d.split(' ')
+        frame_number = int(x[1])
         bb_coords = []
-        bbs = [int(i) for i in d[2:]]
+
+        bbs = [int(i) for i in x[3:]]
         for i in range(0, len(bbs), 4):
             bb_coords.append(bbs[i:i + 4])
 
@@ -55,7 +59,7 @@ def main():
         filename = path.basename(video_path)
         filename_wo_ext, file_ext = path.splitext(filename)
 
-        annotations_path = path.join(annotations_folder, f'{filename_wo_ext}.txt')
+        annotations_path = path.join(annotations_folder, f'{filename_wo_ext}_gt.txt')
         annotations = get_annotations(annotations_path)
 
         video_cap = cv.VideoCapture(video_path)
